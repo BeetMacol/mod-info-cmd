@@ -22,6 +22,8 @@
 
   "depends": {
     "minecraft": "1.16.x",
-    "fabricloader": ">=0.11.0"
+    "fabricloader": ">=0.11.0",
+
+    "fabric-command-api-v1": "*"
   }
 }
