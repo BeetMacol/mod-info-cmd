@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+
+  "id": "mod-info-cmd",
+  "version": "0.0.1",
+  "name": "Mod Info Command",
+  "description": "Adds simple mod information utility command for both clients and servers.",
+  "authors": [
+    "BeetMacol"
+  ],
+  "contact": {
+    "sources": "https://github.com/BeetMacol/mod-info-cmd"
+  },
+  "license": "BSD-3",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.beetmacol.mc.modinfocmd.ModInfoCmd::init"
+    ]
+  },
+
+  "depends": {
+    "minecraft": "1.16.x",
+    "fabricloader": ">=0.11.0"
+  }
+}
