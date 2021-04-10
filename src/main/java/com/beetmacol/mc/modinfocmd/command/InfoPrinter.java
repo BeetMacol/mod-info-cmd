@@ -96,11 +96,11 @@ public class InfoPrinter {
 	}
 
 	public static MutableText notStyled(MutableText text) {
-		return text.styled(style -> style.withFormatting(Formatting.RESET).withBold(false).withItalic(false).withColor(Formatting.WHITE));
+		return text.styled(style -> style.withUnderline(false).withBold(false).withItalic(false).withColor(Formatting.WHITE));
 	}
 
 	public static Style linkStyle(String link) {
-		return Style.EMPTY.withFormatting(Formatting.UNDERLINE).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
+		return Style.EMPTY.withUnderline(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
 	}
 
 	public static Style commandStyle(String command) {

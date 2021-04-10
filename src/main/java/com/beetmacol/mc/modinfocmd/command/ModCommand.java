@@ -58,7 +58,7 @@ public class ModCommand {
 	private static int printModInfo(ServerCommandSource source, String modId) {
 		ModMetadata mod = MODS.get(modId);
 		InfoPrinter printer = new InfoPrinter(source);
-		printer.line(new LiteralText(mod.getName()).styled(style -> style.withBold(true).withFormatting(Formatting.UNDERLINE)).append(InfoPrinter.notStyled(" (" + modId + "):")));
+		printer.line(new LiteralText(mod.getName()).styled(style -> style.withBold(true).withUnderline(true)).append(InfoPrinter.notStyled(" (" + modId + "):")));
 		printer.value("Version", mod.getVersion().getFriendlyString());
 		printer.value("Description", mod.getDescription());
 		if (mod.getLicense().size() == 1)
