@@ -4,7 +4,7 @@
   "id": "mod-info-cmd",
   "version": "0.0.1",
   "name": "Mod Info Command",
-  "description": "Adds simple mod information utility command for both clients and servers.",
+  "description": "Adds a simple mod information utility command.",
   "authors": [
     "BeetMacol"
   ],
