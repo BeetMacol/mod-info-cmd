@@ -2,6 +2,7 @@ package com.beetmacol.mc.modinfocmd;
 
 import com.beetmacol.mc.modinfocmd.command.ModCommand;
 import com.google.common.collect.ImmutableMap;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -22,7 +23,11 @@ public class ModInfoCmd {
 
 	public static void init() {
 		loadModsList();
-		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(ModCommand.COMMAND));
+		CommandRegistrationCallback.EVENT.register(ModCommand.INSTANCE::registerServerVersion);
+	}
+
+	public static void initClient() {
+		ModCommand.INSTANCE.registerClientVersion(ClientCommandManager.DISPATCHER);
 	}
 
 	public static void loadModsList() {

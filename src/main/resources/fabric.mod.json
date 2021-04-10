@@ -17,6 +17,9 @@
   "entrypoints": {
     "main": [
       "com.beetmacol.mc.modinfocmd.ModInfoCmd::init"
+    ],
+    "client": [
+      "com.beetmacol.mc.modinfocmd.ModInfoCmd::initClient"
     ]
   },
 

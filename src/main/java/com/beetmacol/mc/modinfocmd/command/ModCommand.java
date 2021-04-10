@@ -1,8 +1,10 @@
 package com.beetmacol.mc.modinfocmd.command;
 
+import com.beetmacol.mc.modinfocmd.command.sideindependent.AnyCommandSource;
+import com.beetmacol.mc.modinfocmd.command.sideindependent.UniversalCommand;
+import com.beetmacol.mc.modinfocmd.command.sideindependent.UniversalCommandManager;
 import com.google.common.collect.Iterables;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
@@ -10,8 +12,6 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.Person;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Texts;
@@ -26,20 +26,25 @@ import static com.beetmacol.mc.modinfocmd.ModInfoCmd.MODS;
 import static com.beetmacol.mc.modinfocmd.ModInfoCmd.OUTSTANDING_CONTACT_TYPES;
 
 @SuppressWarnings("SameParameterValue")
-public class ModCommand {
-	public static final LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager.literal("mod")
-			.then(CommandManager.literal("list")
-					.executes(context -> listMods(context.getSource()))
-			)
-			.then(CommandManager.literal("info")
-					.then(CommandManager.argument("mod", StringArgumentType.string())
-							.suggests(ModCommand::modSuggestions)
-							.executes(context -> printModInfo(context.getSource(), getModId(context, "mod")))
-					)
-			);
+public class ModCommand extends UniversalCommand {
+	public static final ModCommand INSTANCE = new ModCommand();
+
+	public ModCommand() {
+		super(UniversalCommandManager.literal("mod")
+				.then(UniversalCommandManager.literal("list")
+						.executes(context -> listMods(context.getSource()))
+				)
+				.then(UniversalCommandManager.literal("info")
+						.then(UniversalCommandManager.argument("mod", StringArgumentType.string())
+								.suggests(ModCommand::modSuggestions)
+								.executes(context -> printModInfo(context.getSource(), getModId(context, "mod")))
+						)
+				)
+		);
+	}
 
 
-	private static CompletableFuture<Suggestions> modSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) {
+	private static CompletableFuture<Suggestions> modSuggestions(CommandContext<AnyCommandSource> context, SuggestionsBuilder builder) {
 		for (String modId : MODS.keySet())
 			builder.suggest(modId);
 		return builder.buildFuture();
@@ -47,7 +52,7 @@ public class ModCommand {
 
 
 	private static final DynamicCommandExceptionType INVALID_MOD = new DynamicCommandExceptionType(id -> new LiteralText("Unknown mod '" + id + "'"));
-	private static String getModId(CommandContext<ServerCommandSource> context, String argument) throws CommandSyntaxException {
+	private static String getModId(CommandContext<AnyCommandSource> context, String argument) throws CommandSyntaxException {
 		String modId = StringArgumentType.getString(context, argument);
 		if (!MODS.containsKey(modId))
 			throw INVALID_MOD.create(modId);
@@ -55,7 +60,7 @@ public class ModCommand {
 	}
 
 
-	private static int printModInfo(ServerCommandSource source, String modId) {
+	private static int printModInfo(AnyCommandSource source, String modId) {
 		ModMetadata mod = MODS.get(modId);
 		InfoPrinter printer = new InfoPrinter(source);
 		printer.line(new LiteralText(mod.getName()).styled(style -> style.withBold(true).withFormatting(Formatting.UNDERLINE)).append(InfoPrinter.notStyled(" (" + modId + "):")));
@@ -84,7 +89,7 @@ public class ModCommand {
 		return 1;
 	}
 
-	private static int listMods(ServerCommandSource source) {
+	private static int listMods(AnyCommandSource source) {
 		if (MODS.isEmpty()) {
 			source.sendFeedback(new LiteralText("There are no mods loaded"), false);
 			return 0;

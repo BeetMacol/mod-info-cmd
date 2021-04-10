@@ -1,6 +1,6 @@
 package com.beetmacol.mc.modinfocmd.command;
 
-import net.minecraft.server.command.ServerCommandSource;
+import com.beetmacol.mc.modinfocmd.command.sideindependent.AnyCommandSource;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
@@ -16,9 +16,9 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class InfoPrinter {
-	private final ServerCommandSource source;
+	private final AnyCommandSource source;
 
-	public InfoPrinter(ServerCommandSource source) {
+	public InfoPrinter(AnyCommandSource source) {
 		this.source = source;
 	}
 
