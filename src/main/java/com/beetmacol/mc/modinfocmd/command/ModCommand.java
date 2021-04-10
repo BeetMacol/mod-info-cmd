@@ -12,6 +12,7 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.Person;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Texts;
 import net.minecraft.util.Formatting;
@@ -25,20 +26,17 @@ import static com.beetmacol.mc.modinfocmd.ModInfoCmd.MODS;
 import static com.beetmacol.mc.modinfocmd.ModInfoCmd.OUTSTANDING_CONTACT_TYPES;
 
 @SuppressWarnings("SameParameterValue")
-public class FabricCommand {
-	public static final LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager.literal("fabric")
-			.then(CommandManager.literal("mods")
-					.then(CommandManager.literal("list")
-							.executes(context -> listMods(context.getSource()))
-					)
-					.then(CommandManager.literal("info")
-							.then(CommandManager.argument("mod", StringArgumentType.string())
-									.suggests(FabricCommand::modSuggestions)
-									.executes(context -> printModInfo(context.getSource(), getModId(context, "mod")))
-							)
-					)
+public class ModCommand {
+	public static final LiteralArgumentBuilder<ServerCommandSource> COMMAND = CommandManager.literal("mod")
+			.then(CommandManager.literal("list")
+					.executes(context -> listMods(context.getSource()))
 			)
-			.then(CommandManager.literal("info"));
+			.then(CommandManager.literal("info")
+					.then(CommandManager.argument("mod", StringArgumentType.string())
+							.suggests(ModCommand::modSuggestions)
+							.executes(context -> printModInfo(context.getSource(), getModId(context, "mod")))
+					)
+			);
 
 
 	private static CompletableFuture<Suggestions> modSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) {
@@ -76,7 +74,7 @@ public class FabricCommand {
 					// FIXME this URL detection doesn't work with URLs that have custom schemes like 'irc'
 					return new LiteralText(contactEntry.getKey() + ": ").append(new LiteralText(contactEntry.getValue()).setStyle(InfoPrinter.linkStyle(contactEntry.getValue())));
 				} catch (MalformedURLException exception) {
-					return new LiteralText(contactEntry.getKey() + ": " + contactEntry.getValue());
+					return new LiteralText(contactEntry.getKey() + ": ").append(new LiteralText(contactEntry.getValue()).setStyle(InfoPrinter.clipboardStyle(contactEntry.getValue()).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy to clipboard")))));
 				}
 			}
 			return null;
@@ -91,7 +89,7 @@ public class FabricCommand {
 			source.sendFeedback(new LiteralText("There are no mods loaded"), false);
 			return 0;
 		}
-		source.sendFeedback(new LiteralText("There are " + MODS.size() + " mods: ").append(Texts.join(MODS.keySet(), LiteralText::new)), false);
+		source.sendFeedback(new LiteralText("There are " + MODS.size() + " mods: ").append(Texts.join(MODS.keySet(), modId -> new LiteralText(modId).setStyle(InfoPrinter.commandStyle("mod info " + modId).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click for more information")))))), false);
 		return MODS.size();
 	}
 }

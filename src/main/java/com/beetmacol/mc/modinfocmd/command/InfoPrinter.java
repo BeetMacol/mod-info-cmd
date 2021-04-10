@@ -96,10 +96,18 @@ public class InfoPrinter {
 	}
 
 	public static MutableText notStyled(MutableText text) {
-		return text.styled(style -> style.withFormatting(Formatting.RESET).withBold(false).withColor(Formatting.WHITE));
+		return text.styled(style -> style.withFormatting(Formatting.RESET).withBold(false).withItalic(false).withColor(Formatting.WHITE));
 	}
 
 	public static Style linkStyle(String link) {
 		return Style.EMPTY.withFormatting(Formatting.UNDERLINE).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
+	}
+
+	public static Style commandStyle(String command) {
+		return Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + command));
+	}
+
+	public static Style clipboardStyle(String text) {
+		return Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, text));
 	}
 }
